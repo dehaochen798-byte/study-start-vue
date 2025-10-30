@@ -37,8 +37,13 @@ export const useTodoStore = defineStore('todo', {
       if (state.filter === 'active')
         list = list.filter((t) => !t.done)
       if (state.filter === 'done') list = list.filter((t) => t.done)
-      if (state.keyword)
-        list = list.filter((t) => t.text.includes(state.keyword))
+      if (state.keyword.trim()) {
+        const keyword = state.keyword.toLowerCase()
+        list = list.filter((t) =>
+          t.text.toLowerCase().includes(keyword),
+        )
+      }
+
       return list
     },
   },
@@ -74,12 +79,22 @@ export const useTodoStore = defineStore('todo', {
       this.todos = this.todos.filter((t) => t.id !== id)
       this.save()
     },
+
+    /*
+     *双击修改
+     */
+    editText(id: number, newText: string) {
+      this.todos = this.todos.map((todo) =>
+        todo.id === id ? { ...todo, text: newText } : todo,
+      )
+      this.save()
+    },
+
     /*
      *持久化
      */
     save() {
       localStorage.setItem('todos', JSON.stringify(this.todos))
-      console.log('save')
     },
 
     setFilter(keyword: string, filter: string) {
