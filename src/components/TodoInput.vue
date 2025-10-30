@@ -16,18 +16,20 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import { useTodoStore } from '../stores/todo'
+  import { ElMessage } from 'element-plus'
 
   const store = useTodoStore()
   const newTask = ref<string>('')
 
   const addTask = () => {
     const text = newTask.value.trim()
-    if (!text) return
-    console.log('add1')
+    if (!text) {
+      ElMessage.warning('请输入任务内容！')
+      return
+    }
     store.add(text)
-    console.log('add2')
-
     newTask.value = ''
+    ElMessage.success('任务添加成功！')
   }
 </script>
 
